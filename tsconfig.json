@@ -4,9 +4,8 @@
         "module": "commonjs",
         "lib": ["es2015"],
         "removeComments": true,
-        "sourceMap": true,
-        "outDir": "dist",
+        "outDir": "dist"
     },
-    "include": ["./**/*"],
+    "include": ["/**/*"],
     "exclude": ["node_modules", "tests"]
 }
