@@ -19,7 +19,7 @@ Once you have created a database and a user, update environment file configurati
  
 2. Run the migration to create collections
    
-   Replace `{name}` with available collections `(users, users_proxy, sessions, operators, tours)`
+   Replace `{name}` with available collections `(user, user_proxy, session, operator, tour)`
 	```bash
 	# ./node_modules/.bin/ts-node commands/migrations/create-collection-{name}.ts 
 	```
@@ -37,3 +37,18 @@ Once you have created a database and a user, update environment file configurati
  	```bash
  	# yarn test
  	```
+
+Test API
+====================
+You can use any preferred API client to test. Postman was used during development
+
+![List of tours](images/example-tours.png)
+
+
+Please don't forget to follow me on [twitter](https://twitter.com/timmoraja)
+
+Thanks!
+
+License
+======================
+The MIT License (MIT).
