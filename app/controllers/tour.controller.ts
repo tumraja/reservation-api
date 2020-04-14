@@ -6,7 +6,7 @@ class TourController {
    public async create(req: Request, resp: Response) {
         try {
             const data = req.body;
-            if (data.name && data.description && data.imageUrl && data.size && data.price && data.include && data.operatorId) {
+            if (data.name && data.description && data.imageUrl && data.size && data.price && data.include && data.operatorId && data.type) {
                 const collection: Tour[] = await tourRepository.create(data);
                 resp.status(200).json({'results': collection});
             } else {

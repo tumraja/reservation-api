@@ -1,9 +1,10 @@
 import { Operator } from "./operator";
 
 export interface Tour {
-   id: number;
+   _id: number;
    name: string,
    description: string;
+   type: string,
    price: string;
    duration: string;
    include: string[];

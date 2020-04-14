@@ -5,11 +5,12 @@ import * as fs from 'fs';
 import * as https from 'https';
 import { config } from './config/config';
 import { routes } from './app/routes/web';
-
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 const app: Application = express();
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 const commandLineArgs = require('command-line-args');
 
@@ -24,8 +25,7 @@ routes(app);
 const port = config().port;
 clientService.connect();
 
-// console.log('secure: ', options); 0NpafFi9GzPfDrKe
-if (!options.secure) {
+if (config().secure) {
     const httpsServer = https.createServer({
         key: fs.readFileSync('key.pem'),
         cert: fs.readFileSync('cert.pem')
@@ -42,6 +42,7 @@ if (!options.secure) {
 }
 
 // TODO
+// Add filter endpoint
 // - add migration
     // CRUD
     // index (create / drop)

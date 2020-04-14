@@ -1,9 +1,5 @@
 import { Operator } from './../model/operator';
 import { clientService } from './../services/database.service';
-import * as _ from 'lodash';
-import { OPERATORS } from "../data/operators.data";
-import { TOURS } from "../data/tours.data";
-import { doc } from 'prettier';
 
 class OperatorRepository {
     private counter: number = 0;
@@ -11,15 +7,16 @@ class OperatorRepository {
     public async create(data) {
         const primaryId = this.counter += 1;
         const newDocument = {
-            id: primaryId,
-            name: data.name
-        }
+            _id: primaryId,
+            name: data.name,
+            country: data.country,
+            isVerified: data.isVerified
+        };
 
         const db = clientService.db();
         const document = await db.collection('operators').insertOne(newDocument);
-        console.log('created: ', document);
-        clientService.close();
-        return document;
+        console.log('created: ', document.ops);
+        return document.ops;
     }
 
     public async get(operatorId?: number) {
@@ -28,7 +25,7 @@ class OperatorRepository {
             console.log('get: all tours');
 
             const document = await db.collection('operators').find()
-                    .project({'name': 1, '_id': 1})
+                    .project({'name': 1, 'country': 1, 'isVerified': 1, '_id': 1})
                     .toArray();
 
             clientService.close();
@@ -43,8 +40,8 @@ class OperatorRepository {
 
     private async findById(db: any, id: number) {
         console.log('get: ', id);
-        const document: Operator = await db.collection('operators').find({id: {$eq: id}})
-                    .project({'name': 1, '_id': 1})
+        const document: Operator = await db.collection('operators').find({_id: {$eq: id}})
+                    .project({'name': 1, 'country': 1, 'isVerified': 1, '_id': 1})
                     .toArray();
         clientService.close();
         return document;
@@ -63,7 +60,7 @@ class OperatorRepository {
         console.log('destroy: ', operatorId);
         const collection = clientService.db().collection('operators');
 
-        const document = await collection.findOneAndDelete({id: {$eq: operatorId}});
+        const document = await collection.findOneAndDelete({_id: {$eq: operatorId}});
         clientService.close();
         return document;
     }

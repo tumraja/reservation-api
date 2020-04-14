@@ -10,10 +10,14 @@ clientService.connect((err, client) => {
         validator: {
             $jsonSchema: {
                 bsonType: "object",
-                required: [ "name", "description", "price", "duration", "size", "imageUrl", "include", "operatorId"],
+                required: [ "name", "type", "description", "price", "duration", "size", "imageUrl", "include", "operatorId"],
                 properties: {
                     _id: {},
                     name: {
+                        bsonType: "string",
+                        description: "must be a string and is required"
+                    },
+                    type: {
                         bsonType: "string",
                         description: "must be a string and is required"
                     },

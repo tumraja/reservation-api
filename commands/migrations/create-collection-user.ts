@@ -25,6 +25,39 @@ function create(client) {
                     age: {
                         bsonType: "int",
                         description: "must be a int and is required"
+                    },
+                    bookings: {
+                        bsonType: ["array"],
+                        uniqueItems: true,
+                        items: {
+                            bsonType: ["object"],
+                            required: ["tourId", "email", "from", "to", "comment"],
+                            additionalProperties: false,
+                            description: "'items' must contain the stated fields.",
+                            properties: {
+                                _id: {},
+                                tourId: {
+                                    bsonType: "int",
+                                    description: "tour id is required"
+                                },
+                                email: {
+                                    bsonType: "string",
+                                    description: "must be valid email and is required"
+                                },
+                                from: {
+                                    bsonType: "date",
+                                    description: "must be valid date and is required"
+                                },
+                                to: {
+                                    bsonType: "date",
+                                    description: "must be valid date and is required"
+                                },
+                                comment: {
+                                    bsonType: "string",
+                                    description: "comment field is required"
+                                }
+                            }
+                        }
                     }
                 }
             }

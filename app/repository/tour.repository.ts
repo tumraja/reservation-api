@@ -6,23 +6,25 @@ class TourRepository {
 
     public async create(data) {
         const collection = clientService.db().collection('tours');
-        const document = this.prepareDocument(data);
-        return await collection.insertOne(document);
+        const newDocument = this.prepareDocument(data);
+        const document = await collection.insertOne(newDocument);
+        return document.ops;
     }
 
     private prepareDocument(data): Tour {
         const primaryId = this.counter += 1;
 
         const document = {
-            id: primaryId,
+            _id: primaryId,
             name: data.name,
+            type: data.type,
             description: data.description,
             price: data.price,
             size: data.size,
             operatorId: data.operatorId,
             imageUrl: data.imageUrl,
             include: data.include,
-            duration: ''
+            duration: data.duration
         };
 
         return document;
@@ -37,7 +39,7 @@ class TourRepository {
                         '$lookup': { 
                             'from': 'operators',
                             'localField': 'operatorId',
-                            'foreignField': 'id',
+                            'foreignField': '_id',
                             'as': 'operator'
                         } 
                     }

@@ -1,4 +1,5 @@
 port: 4800
 mongoAtlas: 
-  url: 'mongodb+srv://timmo:0NpafFi9GzPfDrKe@cluster0-mm8fs.mongodb.net/test?retryWrites=true&w=majority'
-  dbname: 'utalii'
+  url: 'mongodb+srv://<username>:<password>@cluster0-mm8fs.mongodb.net/test?retryWrites=true&w=majority'
+  dbname: 'you_mongo_dbname'
+secure: true

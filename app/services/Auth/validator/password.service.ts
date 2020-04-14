@@ -1,5 +1,5 @@
 const passwordValidator = require('password-validator');
-import * as argon2 from 'argon2';
+import * as argon2 from "argon2";
 const schema = new passwordValidator();
 
 export function checkPasswordPolicy(password: string) {
@@ -13,10 +13,10 @@ export function checkPasswordPolicy(password: string) {
     return schema.validate(password, { list: true })
 }
 
-export async function hashPassword(password: string) {
+export async function hashPassword(password) {
    return await argon2.hash(password);
 }
 
-export async function verifyPassword(hashedPassword: string, password: string) {
+export async function verifyPassword(hashedPassword, password) {
     return await argon2.verify(hashedPassword, password);
 }

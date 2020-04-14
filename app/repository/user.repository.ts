@@ -1,6 +1,6 @@
 import { User } from "../model/user";
 import { clientService } from "../services/database.service";
-import { hashPassword } from "../services/Auth/password.service";
+import { hashPassword } from "../services/Auth/validator/password.service";
 
 class UserRepository {
     private counter: number = 0;
@@ -44,18 +44,26 @@ class UserRepository {
         return newDocument;
     }
 
-    public async findUserBy(email: string) {
-        console.log('get-userId: ', email);
-        const document: User = await clientService.db().collection('users').find({email: {$eq: email}})
+    public async findByEmail(userEmail: string) {
+        console.log('get-userEmail: ', userEmail);
+        const document = await clientService.db().collection('users').find({email: {$eq: userEmail}})
             .project({'name': 1, '_id': 1, 'email': 1, 'password': 1, 'age': 1})
             .toArray();
-        return document;
+        return document[0];
+    }
+
+    public async findById(userId: number) {
+        console.log('get-userId: ', userId);
+        const document = await clientService.db().collection('users').find({_id: {$eq: userId}})
+            .project({'name': 1, '_id': 1, 'email': 1, 'age': 1, 'bookings': 1})
+            .toArray();
+        return document[0];
     }
 
     public async update(userId: number, data: any) {
         console.log('update: ', {userId, data});
         let updateUserDocument = {};
-        // TODO: Move this separate class: HandleUpdateCriteria
+        // TODO: Move this to separate class: HandleUpdateCriteria
         if (!data.password) {
             updateUserDocument = {
                 name: data.name,

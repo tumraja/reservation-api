@@ -1,28 +1,29 @@
-import { User } from "../../model/user";
 import { userRepository } from "../../repository/user.repository";
-import {verifyPassword} from "./password.service";
+import { verifyPassword } from "./validator/password.service";
 import { Response } from "express";
+import { User } from "../../model/user";
+import { session } from "./session.service";
+import { sessionRepository } from "../../repository/session.repository.";
 
 export async function attemptLogin(credentials, resp: Response) {
-    const user = await userRepository.findUserBy(credentials.email);
+    const user: User = await userRepository.findByEmail(credentials.email);
 
-    console.log('dfffff: ', user);
     if (!user) {
-        throw new Error('There was a problem logging in. Check your email and password or create an account.');
+        throw new Error('Check your email and password or create an account.');
     }
 
-    console.log('check: ', credentials.password);
-    console.log('await: ', await verifyPassword(user.password, credentials.password))
     if (await verifyPassword(user.password, credentials.password)) {
-        console.log('-verify: ');
+        delete user.password;
+        const sessionId = await session(32).then(bytes => bytes.toString('hex'));
+        const isSessionCreated = await sessionRepository.create({_id: sessionId, userId: user._id});
 
-        console.log('user: ', user);
-        resp.status(200).json(user);
+        if (isSessionCreated) {
+            resp.cookie('SESSID', sessionId, {httpOnly: true,  secure: true});
+            resp.status(200).json({"result": user});
+        } else {
+            throw new Error('Check your email and password or create an account.');
+        }
     } else {
-        console.log('no-verify: ');
-        resp.status(200).json({"error": "Please check your email or password again"});
+        resp.status(200).json({"error": ["login"]});
     }
-   // delete user.password;
-
-    return user;
 }
