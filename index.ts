@@ -1,10 +1,10 @@
-import { clientService } from './app/services/database.service';
+import { clientService } from './src/services/database.service';
 import * as express from 'express';
 import { Application } from 'express';
 import * as fs from 'fs';
 import * as https from 'https';
 import { config } from './config/config';
-import { routes } from './app/routes/web';
+import { routes } from './src/routes/web';
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 

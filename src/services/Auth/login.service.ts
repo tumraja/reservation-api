@@ -1,11 +1,11 @@
 import { userRepository } from "../../repository/user.repository";
 import { verifyPassword } from "./validator/password.service";
 import { Response } from "express";
-import { User } from "../../model/user";
+import {User, UserCredentail} from "../../model/user";
 import { session } from "./session.service";
 import { sessionRepository } from "../../repository/session.repository.";
 
-export async function attemptLogin(credentials, resp: Response) {
+export async function attemptLogin(credentials: UserCredentail, resp: Response) {
     const user: User = await userRepository.findByEmail(credentials.email);
 
     if (!user) {

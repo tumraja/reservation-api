@@ -1,9 +1,10 @@
 import { clientService } from "../services/database.service";
+import { Booking } from "../model/booking";
 
 class BookingRepository {
     private counter: number = 0;
 
-    public async book(data) {
+    public async book(data: Booking) {
         // TODO: each booking should have a status eg: active / inactive
         this.counter +=1;
         const usersCollection = clientService.db().collection('users');

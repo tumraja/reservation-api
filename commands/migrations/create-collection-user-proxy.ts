@@ -1,4 +1,4 @@
-import { clientService } from "../../app/services/database.service";
+import { clientService } from "../../src/services/database.service";
 import { config } from "../../config/config";
 const assert = require('assert');
 

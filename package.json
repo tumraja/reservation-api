@@ -4,10 +4,12 @@
   "description": "Tour package api",
   "main": "index.ts",
   "scripts": {
-    "test": "jest --watchAll --colors",
-    "migration": "./node_modules/.bin/ts-node commands/migrations/script.ts --colors",
+    "test": "jest --forceExit --coverage --verbose",
+    "test:watch": "yarn run test -- --watchAll",
+    "lint": "tsc --noEmit && eslint \"**/*.{ts}\" --quiet --fix",
     "server": "./node_modules/.bin/ts-node ./index.ts",
-    "server:watch": "./node_modules/.bin/nodemon  -w ./ --ext \".ts\" --exec \"npm run server\""
+    "server:watch": "./node_modules/.bin/nodemon  -w ./ --ext \".ts\" --exec \"npm run server\"",
+    "migration": "./node_modules/.bin/ts-node commands/migrations/script.ts --colors"
   },
   "keywords": [
     "TypeScript",
@@ -20,7 +22,7 @@
     "@types/js-yaml": "3.12.3",
     "@types/lodash": "4.14.149",
     "@types/node": "13.11.1",
-    "argon2": "^0.26.2",
+    "argon2": "0.26.2",
     "body-parser": "1.19.0",
     "command-line-args": "5.1.1",
     "cookie-parser": "1.4.5",
@@ -31,6 +33,7 @@
     "yargs": "15.3.1"
   },
   "devDependencies": {
+    "@types/eslint": "6.1.1",
     "@types/jest": "25.2.1",
     "babel-jest": "25.3.0",
     "http-server": "0.12.1",

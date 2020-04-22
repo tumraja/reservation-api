@@ -4,7 +4,7 @@ import { clientService } from './../services/database.service';
 class OperatorRepository {
     private counter: number = 0;
 
-    public async create(data) {
+    public async create(data: Operator) {
         const primaryId = this.counter += 1;
         const newDocument = {
             _id: primaryId,

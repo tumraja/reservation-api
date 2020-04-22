@@ -4,14 +4,14 @@ import { clientService } from './../services/database.service';
 class TourRepository {
     private counter: number = 0;
 
-    public async create(data) {
+    public async create(data: Tour) {
         const collection = clientService.db().collection('tours');
         const newDocument = this.prepareDocument(data);
         const document = await collection.insertOne(newDocument);
         return document.ops;
     }
 
-    private prepareDocument(data): Tour {
+    private prepareDocument(data: Tour): Tour {
         const primaryId = this.counter += 1;
 
         const document = {
@@ -53,7 +53,7 @@ class TourRepository {
         return this.findById(tourId);
     }
 
-    private async findById(id) {
+    private async findById(id: number) {
         const collection = clientService.db().collection('tours');
          const document = collection.find({id: id})
             .project({ 'tours' : 1, 'name' : 1, 'image': 1, 'size': 1, 'price': 1, 'include': 1 })

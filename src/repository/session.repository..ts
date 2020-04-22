@@ -1,13 +1,14 @@
 import { clientService } from './../services/database.service';
+import { Session } from "../model/session";
 
 class SessionRepository {
-    public async create(session) {
+    public async create(session: Session) {
         const document = await clientService.db().collection('sessions').insertOne(session);
         console.log('created: ', document.ops);
         return !!document.ops[0];
     }
 
-    public async get(sessionId) {
+    public async get(sessionId: string) {
         if (!sessionId) {
             console.log('get: sessionId');
             const document = await clientService.db().collection('sessions')

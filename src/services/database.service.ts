@@ -9,6 +9,7 @@ class Client {
     }
 
     public async connect(callback?) {
+        console.log('Type: ', this.cl)
         await this.cl.connect(callback);
     }
 
