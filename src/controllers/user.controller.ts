@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
 import { User } from "../model/user";
 import { userRepository } from "../repository/user.repository";
-import { sessionRepository } from "../repository/session.repository.";
 import { checkPasswordPolicy } from "../services/auth/validator/password.service";
 import { emailValidatorService } from "../services/auth/validator/email-validator.service";
-import {EmailError} from "../Errors/EmailError";
 
 class UserController {
     public async create(req: Request, resp: Response) {
@@ -14,24 +12,19 @@ class UserController {
         const list = checkPasswordPolicy(newUser.password);
         const isEmailValid = emailValidatorService(newUser.email);
 
-        console.log('isEmailValid: ', isEmailValid);
         if (!isEmailValid) {
             error = ['email'];
         }
 
-        if (list.length || error.length) {
-            error = [...error, ...list]; // TODO: Bug error
+        if (list.length) {
+            error = [...error, ...list];
             resp.status(400).json({error});
-            error = [];
         } else {
             try {
                 const document: User = await userRepository.create(newUser);
                 resp.status(200).json({'results': document});
             } catch(err) {
-                console.log('err: ', err.toString());
-                const errMsg = err.toString().split(':')[1].trim();
-                error = [errMsg];
-                resp.status(400).json({error});
+                resp.status(400).json({err});
             }
         }
     }
@@ -45,8 +38,12 @@ class UserController {
         // }
 
         if (userId) {
-            const user = await userRepository.findById(userId);
-            resp.status(200).json({'results': user});
+            try {
+                const user = await userRepository.findById(userId);
+                resp.status(200).json({'results': user});
+            } catch (error) {
+                resp.status(400).json(error);
+            }
         } else {
             resp.status(400).json({"error": "Please check you account or login"});
         }

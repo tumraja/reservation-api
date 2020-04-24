@@ -8,10 +8,10 @@ class SessionRepository {
         this.storageService = storageService.instance;
     }
 
-    public create(session: Session) {
+    public async create(session: Session) {
         this.initCollection();
-        const document = this.storageService.create(session);
-        return !!document.ops[0];
+        const document = await this.storageService.create(session);
+        return document;
     }
 
     public get(sessionId: string) {

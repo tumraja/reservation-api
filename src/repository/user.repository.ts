@@ -2,6 +2,7 @@ import { User } from "../model/user";
 import { hashPassword } from "../services/auth/validator/password.service";
 import { storageService } from "../services/storage/storage.service";
 import { EmailError } from "../Errors/EmailError";
+import {UserNotFoundError} from "../Errors/UserNotFoundError";
 
 class UserRepository {
     private counter: number = 0;
@@ -13,36 +14,33 @@ class UserRepository {
 
     public async create(newUser: User) {
         this.counter +=1;
-        this.storageService.setCollection('users');
-        const dbInstance = this.storageService.instance.getInstance();
-        const usersCollection = dbInstance.collection('users');
-        const proxyUsersCollection = dbInstance.collection('users_proxy');
         const primaryId = this.counter;
         try {
-            const proxy = await proxyUsersCollection.insertOne({
-                _id: primaryId + 1,
+            this.storageService.setCollection('users_proxy');
+            const proxy = await this.storageService.create({
+                _id: primaryId + 3,
                 email: newUser.email
             });
 
             if (proxy) {
-                return await this.createUser(newUser, primaryId, usersCollection);
+                return this.createUser(newUser, primaryId);
             }
         } catch (e) {
             throw new EmailError();
         }
     }
 
-    private async createUser(newUser: User, primaryId: number, usersSiblingCollection) {
+    private async createUser(newUser: User, primaryId: number) {
         const hashedPassword = await hashPassword(newUser.password);
         const newDocument = this.buildUserDocument(primaryId, newUser, hashedPassword);
 
-        const result = await usersSiblingCollection.insertOne(newDocument);
-        return result.ops;
+        this.storageService.setCollection('users');
+        return await this.storageService.create(newDocument);
     }
 
     private buildUserDocument(primaryId: number, newUser: User, hashedPassword?: string) {
         const newDocument = {
-            _id: primaryId + 1,
+            _id: primaryId + 3,
             name: newUser.name,
             email: newUser.email,
             password: hashedPassword,
@@ -52,18 +50,21 @@ class UserRepository {
     }
 
     public async findByEmail(userEmail: string) {
-        const dbInstance = this.storageService.instance.getInstance();
-        const usersCollection = dbInstance.collection('users');
-        const document = await usersCollection.find({email: {$eq: userEmail}})
-            .project({'name': 1, '_id': 1, 'email': 1, 'password': 1, 'age': 1})
-            .toArray();
-        return document[0];
+        this.initCollection();
+        const project = {'name': 1, '_id': 1, 'email': 1, 'password': 1, 'age': 1};
+        return await this.storageService.findByEmail(userEmail, project);
     }
 
     public async findById(userId: number) {
-        this.storageService.setCollection('users');
+        this.initCollection();
         const project = {'name': 1, '_id': 1, 'email': 1, 'age': 1, 'bookings': 1};
-        return this.storageService.findById(userId, project);
+        const result = await this.storageService.findById(userId, project);
+
+        if (!result.length) {
+            throw new UserNotFoundError();
+        }
+
+        return result;
     }
 
     public async update(userId: number, data: any) {
@@ -108,6 +109,10 @@ class UserRepository {
     public async destroy(userId: number) {
         // TODO: if needed (Probably deactivate user's account)
             // if that the case: add field in the document to track
+    }
+
+    private initCollection() {
+        this.storageService.setCollection('users');
     }
 }
 

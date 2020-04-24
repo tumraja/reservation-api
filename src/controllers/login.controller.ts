@@ -2,13 +2,13 @@ import { Request, Response } from "express";
 import { attemptLogin } from "../services/auth/login.service";
 
 class LoginController {
-    public login(req: Request, resp: Response) {
+    public async login(req: Request, resp: Response) {
         const loginCredentials = req.body;
 
         try {
-            attemptLogin(loginCredentials, resp);
+            await attemptLogin(loginCredentials, resp);
         } catch (e) {
-            console.log('err-login: ', e.toString());
+            resp.status(200).json({"error": [e]});
         }
     }
 }

@@ -4,26 +4,28 @@ import { Response } from "express";
 import { User, UserCredentail } from "../../model/user";
 import { session } from "./session.service";
 import { sessionRepository } from "../../repository/session.repository.";
+import { LoginError } from "../../Errors/LoginError";
 
 export async function attemptLogin(credentials: UserCredentail, resp: Response) {
-    const user: User = await userRepository.findByEmail(credentials.email);
+    const users: User[] = await userRepository.findByEmail(credentials.email);
 
+    const user = users[0];
     if (!user) {
-        throw new Error('Check your email and password or create an account.');
+        throw new LoginError();
     }
 
     if (await verifyPassword(user.password, credentials.password)) {
         delete user.password;
         const sessionId = await session(32).then(bytes => bytes.toString('hex'));
-        const isSessionCreated = await sessionRepository.create({_id: sessionId, userId: user._id});
+        const userSession = await sessionRepository.create({_id: sessionId, userId: user._id});
 
-        if (isSessionCreated) {
+        if (userSession.length) {
             resp.cookie('SESSID', sessionId, {httpOnly: true,  secure: true});
             resp.status(200).json({"result": user});
         } else {
-            throw new Error('Check your email and password or create an account.');
+            throw new LoginError();
         }
     } else {
-        resp.status(200).json({"error": ["login"]});
+        throw new LoginError();
     }
 }

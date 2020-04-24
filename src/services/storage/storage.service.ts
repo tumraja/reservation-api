@@ -4,6 +4,7 @@
  */
 
 import { StorageInterface } from "./storage.interface";
+import { InMemoryStorage } from "./in-memory.storage";
 import { DatabaseStorage } from "./datatabase.storage";
 
 export class StorageService {

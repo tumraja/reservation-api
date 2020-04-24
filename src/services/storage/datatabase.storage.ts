@@ -61,6 +61,16 @@ export class DatabaseStorage implements StorageInterface {
         return query.toArray();
     }
 
+    public async findByEmail(email: string, project?: object) {
+        console.log('emai: ', email);
+        const query = this.getCollection.find({email: {$eq: email}});
+        DatabaseStorage.projectQuery(project, query);
+
+        const result = await query.toArray();
+        console.log('result: ', result);
+        return result;
+    }
+
     public async aggregate(project?: object) {
         const query = this.getCollection.aggregate(
             [
