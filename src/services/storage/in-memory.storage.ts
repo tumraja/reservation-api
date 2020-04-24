@@ -5,7 +5,7 @@ export class InMemoryStorage implements StorageInterface {
         console.log('close a file')
     }
 
-    open() {
+    connect() {
         console.log('open a file')
     }
 
@@ -20,5 +20,14 @@ export class InMemoryStorage implements StorageInterface {
     }
 
     getAll() {
+    }
+
+    destroy(id: number) {
+    }
+
+    find() {
+    }
+
+    update(id: number, data: any) {
     }
 }

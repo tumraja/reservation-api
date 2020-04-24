@@ -1,19 +1,18 @@
 import { Tour } from './../model/tour';
-import { StorageService } from "../services/storage/storage.service";
-import { DatabaseStorage } from "../services/storage/datatabase.storage";
+import { storageService } from "../services/storage/storage.service";
 
 class TourRepository {
     private counter: number = 0;
-    private storageService: StorageService;
+    private storageService;
 
     constructor() {
-        this.storageService = new StorageService(new DatabaseStorage('tours'));
-        this.storageService.connect();
+        this.storageService = storageService.instance;
     }
 
     public create(data: Tour) {
+        this.initCollection();
         const newDocument = this.prepareDocument(data);
-        return this.storageService.instance.create(newDocument)
+        return this.storageService.create(newDocument)
     }
 
     private prepareDocument(data: Tour): Tour {
@@ -36,19 +35,29 @@ class TourRepository {
     }
 
     public get() {
-        return this.storageService.instance.aggregate();
+        this.initCollection();
+        const project = { 'description' : 1, 'name' : 1, 'image': 1, 'size': 1, 'price': 1, 'include': 1, 'operator': 1 };
+        return this.storageService.aggregate(project);
     }
 
     public findById(id: number) {
-        return this.storageService.instance.findById(id);
+        this.initCollection();
+        const project  =  { 'tours' : 1, 'name' : 1, 'image': 1, 'size': 1, 'price': 1, 'include': 1 };
+        return this.storageService.findById(id, project);
     }
 
     public update(tourId: number, data: any) {
-        return this.storageService.instance.update(tourId, data);
+        this.initCollection();
+        return this.storageService.update(tourId, data);
     }
 
     public destroy(tourId: number) {
-        return this.storageService.instance.destroy(tourId);
+        this.initCollection();
+        return this.storageService.destroy(tourId);
+    }
+
+    private initCollection() {
+        this.storageService.setCollection('tours');
     }
 }
 

@@ -3,28 +3,30 @@ import { config } from "../../../config/config";
 const { MongoClient } = require('mongodb');
 
 export class DatabaseStorage implements StorageInterface {
-    private dbClient: { close: () => any; connect: () => any; db: (arg0: any) => any; };
-    private readonly collectionName: string = undefined;
+    private dbClient;
+    private collection;
 
-    public constructor(collectionName?: string) {
-        this.collectionName = collectionName;
+    public constructor() {
         this.dbClient = new MongoClient(config().mongoAtlas.url, { useUnifiedTopology: true });
     }
 
-    async close() {
+    public async close() {
         await this.dbClient.close();
     }
 
-    async open() {
-        await this.dbClient.connect();
+    public async connect() {
+        try {
+            // Connect to the MongoDB cluster
+            this.dbClient.connect((err) => {
+                console.log('connected...');
+            });
+        } catch (e) {
+            console.error('Connect to the MongoDB cluster err: ', e);
+        }
     }
 
-    public getInstance() {
-        return this.dbClient.db(config().mongoAtlas.dbname);
-    }
-
-    private get getCollection() {
-        return this.getInstance().collection(this.collectionName);
+    public setCollection(name: string) {
+        this.collection = this.getDBInstance().collection(name);
     }
 
     public async create(newDocument) {
@@ -36,23 +38,31 @@ export class DatabaseStorage implements StorageInterface {
         return await this.getCollection.updateOne({_id: {$eq: id}}, {$set: data});
     }
 
+    public async updateByEmail(email: string, data: any) {
+        return await this.getCollection.updateOne({email: {$eq: email}}, {$push : {data}});
+    }
+
     public async destroy(id: number) {
         return await this.getCollection.findOneAndDelete({_id: {$eq: id}});
     }
 
-    public async find() {
-        const document = await this.getCollection.find().toArray();
+    public async find(project?: object) {
+        const query = this.getCollection.find();
+        DatabaseStorage.projectQuery(project, query);
+        const document = await query.toArray();
 
         return document;
     }
 
-    public async findById(id: number) {
-        const document = await this.getCollection.find({_id: id}).toArray();
-        return document;
+    public async findById(id: number, project?: object) {
+        const query = this.getCollection.find({_id: id});
+        DatabaseStorage.projectQuery(project, query);
+
+        return query.toArray();
     }
 
-    public async aggregate() {
-        const document = await this.getCollection.aggregate(
+    public async aggregate(project?: object) {
+        const query = this.getCollection.aggregate(
             [
                 {
                     '$lookup': {
@@ -62,10 +72,24 @@ export class DatabaseStorage implements StorageInterface {
                         'as': 'operator'
                     }
                 }
-            ])
-           // .project({ 'description' : 1, 'name' : 1, 'image': 1, 'size': 1, 'price': 1, 'include': 1, 'operator': 1 })
-            .toArray();
+            ]);
+        DatabaseStorage.projectQuery(project, query);
+        const document = await query.toArray();
 
         return document;
+    }
+
+    private static projectQuery(project: {}, query) {
+        if (project) {
+            query.project(project);
+        }
+    }
+
+    private getDBInstance() {
+        return this.dbClient.db(config().mongoAtlas.dbname);
+    }
+
+    private get getCollection() {
+        return this.collection;
     }
 }

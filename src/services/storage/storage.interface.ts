@@ -1,10 +1,9 @@
 export interface StorageInterface {
-    open(): void;
+    connect(): void;
     close(): void;
-    getInstance(): void;
     create(document);
-    find();
-    findById(id: number | string);
+    find(project?: object);
+    findById(id: number | string, project?: object);
     update(id: number, data: any);
     destroy(id: number);
 }

@@ -4,8 +4,7 @@ import * as fs from 'fs';
 import * as https from 'https';
 import { config } from './config/config';
 import { routes } from './src/routes/web';
-// import {storageService} from "./src/services/storage/storage.service";
-import {DatabaseStorage} from "./src/services/storage/datatabase.storage";
+import { storageService } from "./src/services/storage/storage.service";
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
@@ -24,8 +23,7 @@ const options = commandLineArgs(optionDefinitions);
 routes(app);
 
 const port = config().port;
-// storageService.connect(new DatabaseStorage());
-// clientService.connect();
+storageService; //connect to MongoDB Cluster
 
 if (config().secure) {
     const httpsServer = https.createServer({

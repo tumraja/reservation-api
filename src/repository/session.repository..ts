@@ -1,28 +1,33 @@
 import { Session } from "../model/session";
-import { StorageService } from "../services/storage/storage.service";
-import { DatabaseStorage } from "../services/storage/datatabase.storage";
+import { storageService } from "../services/storage/storage.service";
 
 class SessionRepository {
-    private storageService: StorageService;
+    private storageService;
 
     constructor() {
-        this.storageService = new StorageService(new DatabaseStorage('sessions'));
-        this.storageService.connect();
+        this.storageService = storageService.instance;
     }
 
     public create(session: Session) {
-        const document = this.storageService.instance.create(session);
+        this.initCollection();
+        const document = this.storageService.create(session);
         return !!document.ops[0];
     }
 
     public get(sessionId: string) {
         if (!sessionId) {
-            return this.storageService.instance.findById(sessionId);
+            this.initCollection();
+            return this.storageService.findById(sessionId, {'userId': 1, '_id': 1});
         }
     }
 
     public async destroy(sessionId: string) {
-        return this.storageService.instance.destroy(sessionId);
+        this.initCollection();
+        return this.storageService.destroy(sessionId);
+    }
+
+    private initCollection() {
+        this.storageService.setCollection('sessions');
     }
 }
 

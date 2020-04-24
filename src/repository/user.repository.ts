@@ -1,20 +1,19 @@
 import { User } from "../model/user";
 import { hashPassword } from "../services/auth/validator/password.service";
-import { StorageService } from "../services/storage/storage.service";
-import { DatabaseStorage } from "../services/storage/datatabase.storage";
+import { storageService } from "../services/storage/storage.service";
 import { EmailError } from "../Errors/EmailError";
 
 class UserRepository {
     private counter: number = 0;
-    private storageService: StorageService;
+    private storageService;
 
     constructor() {
-        this.storageService = new StorageService(new DatabaseStorage());
-        this.storageService.connect();
+        this.storageService = storageService.instance;
     }
 
     public async create(newUser: User) {
         this.counter +=1;
+        this.storageService.setCollection('users');
         const dbInstance = this.storageService.instance.getInstance();
         const usersCollection = dbInstance.collection('users');
         const proxyUsersCollection = dbInstance.collection('users_proxy');
@@ -62,12 +61,9 @@ class UserRepository {
     }
 
     public async findById(userId: number) {
-        const dbInstance = this.storageService.instance.getInstance();
-        const usersCollection = dbInstance.collection('users');
-        const document = await usersCollection.find({_id: {$eq: userId}})
-            .project({'name': 1, '_id': 1, 'email': 1, 'age': 1, 'bookings': 1})
-            .toArray();
-        return document[0];
+        this.storageService.setCollection('users');
+        const project = {'name': 1, '_id': 1, 'email': 1, 'age': 1, 'bookings': 1};
+        return this.storageService.findById(userId, project);
     }
 
     public async update(userId: number, data: any) {
