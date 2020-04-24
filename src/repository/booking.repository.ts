@@ -1,13 +1,22 @@
-import { clientService } from "../services/database.service";
 import { Booking } from "../model/booking";
+import { StorageService } from "../services/storage/storage.service";
+import { DatabaseStorage } from "../services/storage/datatabase.storage";
 
 class BookingRepository {
     private counter: number = 0;
+    private storageService: StorageService;
+
+    constructor() {
+        this.storageService = new StorageService(new DatabaseStorage());
+        this.storageService.connect();
+    }
 
     public async book(data: Booking) {
         // TODO: each booking should have a status eg: active / inactive
+        const dbInstance = this.storageService.instance.getInstance();
+        const usersCollection = dbInstance.collection('users');
+
         this.counter +=1;
-        const usersCollection = clientService.db().collection('users');
         const primaryId = this.counter;
 
         try {

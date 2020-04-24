@@ -1,28 +1,28 @@
-import { clientService } from './../services/database.service';
 import { Session } from "../model/session";
+import { StorageService } from "../services/storage/storage.service";
+import { DatabaseStorage } from "../services/storage/datatabase.storage";
 
 class SessionRepository {
-    public async create(session: Session) {
-        const document = await clientService.db().collection('sessions').insertOne(session);
-        console.log('created: ', document.ops);
+    private storageService: StorageService;
+
+    constructor() {
+        this.storageService = new StorageService(new DatabaseStorage('sessions'));
+        this.storageService.connect();
+    }
+
+    public create(session: Session) {
+        const document = this.storageService.instance.create(session);
         return !!document.ops[0];
     }
 
-    public async get(sessionId: string) {
+    public get(sessionId: string) {
         if (!sessionId) {
-            console.log('get: sessionId');
-            const document = await clientService.db().collection('sessions')
-                .find({_id: {$eq: sessionId}})
-                .project({'userId': 1, '_id': 1});
-            return document;
+            return this.storageService.instance.findById(sessionId);
         }
     }
 
     public async destroy(sessionId: string) {
-        console.log('destroy: ', sessionId);
-        const collection = clientService.db().collection('sessions');
-        const document = await collection.findOneAndDelete({_id: {$eq: sessionId}});
-        return document;
+        return this.storageService.instance.destroy(sessionId);
     }
 }
 

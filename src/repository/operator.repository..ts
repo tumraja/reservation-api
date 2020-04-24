@@ -1,10 +1,17 @@
 import { Operator } from './../model/operator';
-import { clientService } from './../services/database.service';
+import { StorageService } from "../services/storage/storage.service";
+import { DatabaseStorage } from "../services/storage/datatabase.storage";
 
 class OperatorRepository {
     private counter: number = 0;
+    private storageService: StorageService;
 
-    public async create(data: Operator) {
+    constructor() {
+        this.storageService = new StorageService(new DatabaseStorage('operators'));
+        this.storageService.connect();
+    }
+
+    public create(data: Operator) {
         const primaryId = this.counter += 1;
         const newDocument = {
             _id: primaryId,
@@ -13,56 +20,23 @@ class OperatorRepository {
             isVerified: data.isVerified
         };
 
-        const db = clientService.db();
-        const document = await db.collection('operators').insertOne(newDocument);
-        console.log('created: ', document.ops);
-        return document.ops;
+        return this.storageService.instance.create(newDocument);
     }
 
-    public async get(operatorId?: number) {
-        const db = clientService.db();
-        if (!operatorId) {
-            console.log('get: all tours');
-
-            const document = await db.collection('operators').find()
-                    .project({'name': 1, 'country': 1, 'isVerified': 1, '_id': 1})
-                    .toArray();
-
-            clientService.close();
-
-            return document;
-        } else {
-            const document=  await this.findById(db, operatorId);
-            clientService.close();
-            return document;
-        }
+    public getAll() {
+        return this.storageService.instance.find();
     }
 
-    private async findById(db: any, id: number) {
-        console.log('get: ', id);
-        const document: Operator = await db.collection('operators').find({_id: {$eq: id}})
-                    .project({'name': 1, 'country': 1, 'isVerified': 1, '_id': 1})
-                    .toArray();
-        clientService.close();
-        return document;
+    public findById(id: number | string) {
+        return this.storageService.instance.findById(id);
     }
 
-    public async update(operatorId: number, data: any) {
-        console.log('update: ', {operatorId, data})
-        const collection = clientService.db().collection('operators');
-
-        const document = await collection.updateOne({id: {$eq: operatorId}}, {$set: {name: data.name}});
-        clientService.close();
-        return document;
+    public update(operatorId: number, data: any) {
+        return this.storageService.instance.update(operatorId, {name: data.name});
     }
 
-    public async destroy(operatorId: number) {
-        console.log('destroy: ', operatorId);
-        const collection = clientService.db().collection('operators');
-
-        const document = await collection.findOneAndDelete({_id: {$eq: operatorId}});
-        clientService.close();
-        return document;
+    public destroy(operatorId: number) {
+        return this.storageService.instance.destroy(operatorId);
     }
 }
 

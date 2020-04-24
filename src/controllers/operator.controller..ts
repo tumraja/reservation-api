@@ -22,7 +22,7 @@ class OperatorController {
   public async get(req: Request, resp: Response) {
         try {
             const operatorId: number = parseInt(req.params.id);
-            const document: Operator[] = await operatorRepository.get(operatorId);
+            const document: Operator[] = operatorId ? await operatorRepository.findById(operatorId) : await operatorRepository.getAll();
             resp.status(200).json({'results': document});
         } catch(err) {
             console.log("err: ", err);

@@ -1,14 +1,23 @@
 import { User } from "../model/user";
-import { clientService } from "../services/database.service";
-import { hashPassword } from "../services/Auth/validator/password.service";
+import { hashPassword } from "../services/auth/validator/password.service";
+import { StorageService } from "../services/storage/storage.service";
+import { DatabaseStorage } from "../services/storage/datatabase.storage";
+import { EmailError } from "../Errors/EmailError";
 
 class UserRepository {
     private counter: number = 0;
+    private storageService: StorageService;
+
+    constructor() {
+        this.storageService = new StorageService(new DatabaseStorage());
+        this.storageService.connect();
+    }
 
     public async create(newUser: User) {
         this.counter +=1;
-        const usersCollection = clientService.db().collection('users');
-        const proxyUsersCollection = clientService.db().collection('users_proxy');
+        const dbInstance = this.storageService.instance.getInstance();
+        const usersCollection = dbInstance.collection('users');
+        const proxyUsersCollection = dbInstance.collection('users_proxy');
         const primaryId = this.counter;
         try {
             const proxy = await proxyUsersCollection.insertOne({
@@ -20,8 +29,7 @@ class UserRepository {
                 return await this.createUser(newUser, primaryId, usersCollection);
             }
         } catch (e) {
-            console.log('Duplicated email: ', e.errmsg);
-            throw new Error('email_taken');
+            throw new EmailError();
         }
     }
 
@@ -45,53 +53,55 @@ class UserRepository {
     }
 
     public async findByEmail(userEmail: string) {
-        console.log('get-userEmail: ', userEmail);
-        const document = await clientService.db().collection('users').find({email: {$eq: userEmail}})
+        const dbInstance = this.storageService.instance.getInstance();
+        const usersCollection = dbInstance.collection('users');
+        const document = await usersCollection.find({email: {$eq: userEmail}})
             .project({'name': 1, '_id': 1, 'email': 1, 'password': 1, 'age': 1})
             .toArray();
         return document[0];
     }
 
     public async findById(userId: number) {
-        console.log('get-userId: ', userId);
-        const document = await clientService.db().collection('users').find({_id: {$eq: userId}})
+        const dbInstance = this.storageService.instance.getInstance();
+        const usersCollection = dbInstance.collection('users');
+        const document = await usersCollection.find({_id: {$eq: userId}})
             .project({'name': 1, '_id': 1, 'email': 1, 'age': 1, 'bookings': 1})
             .toArray();
         return document[0];
     }
 
     public async update(userId: number, data: any) {
-        console.log('update: ', {userId, data});
         let updateUserDocument = {};
         // TODO: Move this to separate class: HandleUpdateCriteria
         if (!data.password) {
-            updateUserDocument = {
+            Object.assign(updateUserDocument, {
                 name: data.name,
                 email: data.email,
                 age: data.age
-            }
+            });
         } else {
             const hashedPassword = await hashPassword(data.password);
-            updateUserDocument = {
+            Object.assign(updateUserDocument, {
                 name: data.name,
                 email: data.email,
                 password: hashedPassword,
                 age: data.age
-            }
+            });
         }
 
         // TODO: Handle special cases: (Now assume all fields were changed with the exceptional: password)
            // 1: email was not changed (No need to update users_proxy collection)
            // 2: password was not changed (No need to hash)
            // 3: when all fields were changed
-        const proxyCollection = clientService.db().collection('users_proxy');
-        const userCollection = clientService.db().collection('users');
+        const dbInstance = this.storageService.instance.getInstance();
+        const usersCollection = dbInstance.collection('users');
+        const proxyUsersCollection = dbInstance.collection('users_proxy');
 
         try {
-            const proxy = await proxyCollection.updateOne({_id: {$eq: userId}}, {$set: {email: data.email}});
+            const proxy = await proxyUsersCollection.updateOne({_id: {$eq: userId}}, {$set: {email: data.email}});
 
             if (proxy) {
-                return await userCollection.updateOne({_id: {$eq: userId}}, {$set: updateUserDocument});
+                return await usersCollection.updateOne({_id: {$eq: userId}}, {$set: updateUserDocument});
             }
         } catch (e) {
             console.log('Update err: ', e.errmsg);

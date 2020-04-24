@@ -1,7 +1,7 @@
 import { userRepository } from "../../repository/user.repository";
 import { verifyPassword } from "./validator/password.service";
 import { Response } from "express";
-import {User, UserCredentail} from "../../model/user";
+import { User, UserCredentail } from "../../model/user";
 import { session } from "./session.service";
 import { sessionRepository } from "../../repository/session.repository.";
 

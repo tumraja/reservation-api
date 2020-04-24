@@ -21,7 +21,7 @@ class TourController {
    public async get(req: Request, resp: Response) {
         try {
             const tourId = parseInt(req.params.id);
-            const document: Tour = await tourRepository.get(tourId);
+            const document: Tour = tourId ? await tourRepository.findById(tourId): await tourRepository.get();
             resp.status(200).json({'results': document});
         } catch(err) {
             console.log("err: ", err);

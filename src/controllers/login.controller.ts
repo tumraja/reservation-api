@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { attemptLogin } from "../services/Auth/login.service";
+import { attemptLogin } from "../services/auth/login.service";
 
 class LoginController {
     public login(req: Request, resp: Response) {
