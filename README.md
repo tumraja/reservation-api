@@ -5,6 +5,7 @@ This small API built on Node, TypeScript and using MongoDB (NoSQL)
 
 ## Prerequisites
 ===============
+
 Before you start, make sure you have created a database on MongoDB Atlas. 
 If you don't have an account, please follow the link to create one [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 
@@ -16,6 +17,7 @@ If you don't have an account, please follow the link to create one [MongoDB Atla
 
 ## Getting Started
 ===============
+
 1. The easiest way to get started is to clone the repository:
     ```bash
     # git@github.com:tumraja/nodejs-api-mongodb.git
@@ -54,12 +56,14 @@ If you don't have an account, please follow the link to create one [MongoDB Atla
 
 ## Adding credentials
 ==================
+
 Once you have created a database and a user, update environment file configuration - `mongoAtlas`
 > `config/enviroment.yaml`, add your `<username>:<password>`
 
 
 How to test API
 ==================
+
 For the testing purposes, made a list of endpoints you can on your preferred client. 
 There are two types of storage used `MongoDB and InMemory store`. To test using `InMemory store` is very
 straight forward. You just need to change one line of code and then you are good to go. 
@@ -72,10 +76,9 @@ List of endpoints: [Endpoints](docs/endpoints.md)
 
 Where you can find me
 ============================
+
 You can find me in [twitter](https://twitter.com/timmoraja) & [web](https://tumsime.com)
-
 Thanks!
-
 
 License
 ======================
