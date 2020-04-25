@@ -4,14 +4,14 @@ import { Response } from "express";
 import { User, UserCredentail } from "../../model/user";
 import { session } from "./session.service";
 import { sessionRepository } from "../../repository/session.repository.";
-import { LoginError } from "../../Errors/LoginError";
+import { Login } from "../../Errors/login";
 
 export async function attemptLogin(credentials: UserCredentail, resp: Response) {
     const users: User[] = await userRepository.findByEmail(credentials.email);
 
     const user = users[0];
     if (!user) {
-        throw new LoginError();
+        throw new Login();
     }
 
     if (await verifyPassword(user.password, credentials.password)) {
@@ -23,9 +23,9 @@ export async function attemptLogin(credentials: UserCredentail, resp: Response) 
             resp.cookie('SESSID', sessionId, {httpOnly: true,  secure: true});
             resp.status(200).json({"result": user});
         } else {
-            throw new LoginError();
+            throw new Login();
         }
     } else {
-        throw new LoginError();
+        throw new Login();
     }
 }

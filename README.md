@@ -38,11 +38,15 @@ Once you have created a database and a user, update environment file configurati
  	# yarn test
  	```
 
-Test API
-====================
-You can use any preferred API client to test. Postman was used during development
 
-![List of tours](images/example-tours.png)
+## How to test API
+---------------
+For the testing purposes, made a list of endpoints you can on your preferred client. 
+There are two types of storage used `MongoDB and InMemory store`. To test using `InMemory store` is very
+straight forward. You just need to change one line of code and then you are good to go. 
+
+> NOTE: MongoDB is used as a default database, to switch to InMemory store, make changes on
+> [storage.service.ts](src/services/storage/storage.service.ts) on line 22 to `InMemoryStorage()`.
 
 
 Please don't forget to follow me on [twitter](https://twitter.com/timmoraja)

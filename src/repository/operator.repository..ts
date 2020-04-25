@@ -1,10 +1,11 @@
 import { Operator } from './../model/operator';
 import { storageService } from "../services/storage/storage.service";
+import { DBInterface } from "../services/storage/storage.interface";
 
 class OperatorRepository {
     private counter: number = 0;
     private project: object = {'name': 1, 'country': 1, 'isVerified': 1, '_id': 1};
-    private storageService;
+    private storageService: DBInterface;
 
     constructor() {
         this.storageService = storageService.instance;
@@ -18,32 +19,24 @@ class OperatorRepository {
             country: data.country,
             isVerified: data.isVerified
         };
-        this.initCollection();
-        return this.storageService.create(newDocument);
+
+        return this.storageService.create(newDocument, 'operators');
     }
 
     public getAll() {
-        this.initCollection();
-        return this.storageService.find(this.project);
+        return this.storageService.select('operators', this.project);
     }
 
     public findById(id: number | string) {
-        this.initCollection();
-        return this.storageService.findById(id, this.project);
+        return this.storageService.selectById(id, 'operators', this.project);
     }
 
     public update(operatorId: number, data: any) {
-        this.initCollection();
-        return this.storageService.update(operatorId, {name: data.name});
+        return this.storageService.update(operatorId, {name: data.name}, 'operators');
     }
 
     public destroy(operatorId: number) {
-        this.initCollection();
-        return this.storageService.destroy(operatorId);
-    }
-
-    private initCollection() {
-        this.storageService.setCollection('operators');
+        return this.storageService.destroy(operatorId, 'operators');
     }
 }
 

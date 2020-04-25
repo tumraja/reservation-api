@@ -1,4 +1,4 @@
-export class EmailError extends Error {
+export class Email extends Error {
     private errorMessage: string = 'Please check your email address again';
     constructor(message?: string) {
         super(message);

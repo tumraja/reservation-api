@@ -1,46 +1,38 @@
-import { StorageInterface } from "./storage.interface";
+import { DBInterface, StorageInterface } from "./storage.interface";
+import { document } from "./provider/in-memory-data.provider";
 
-export class InMemoryStorage implements StorageInterface {
-    close() {
-        // close stream
-        console.log('close a file')
-    }
-
-    connect() {
-        // if you read from a file check if file exists otherwise throw an exception
-        console.log('open a file')
-    }
-
-    getInstance() {
-        // :(
-        console.log('Instance memory');
-    }
-
-    create(document) {
-        // create tours / operators / users + bookings
-    }
-
-    findById(id: number) {
-        // return single tours / operators / users + bookings
-        return [{
-            email: "email@email.com"
-        }]
+export class InMemoryStorage implements DBInterface, StorageInterface {
+    create(data: any, collection) {
+        return document(collection).push(data);
     }
 
     destroy(id: number) {
+        return [];
     }
 
-    find() {
-        // return all tours / operators / users + bookings
-        return [
-            'all'
-        ]
+    select(collection) {
+        return document(collection);
     }
 
-    update(id: number, data: any) {
-        // update all tours / operators / users + bookings
+    selectByEmail(id: number | string, collection) {
     }
 
-    public setCollection(name: string) {
+    selectById(id: number | string, collection) {
+        return document(collection).filter(document => document._id === id);
+    }
+
+    update(id: number, data: any, collection) {
+        return [];
+    }
+
+    // Booking
+    updateByEmail(email: string, data: any, collection) {
+        const result = document(collection).filter(document => document.email === email);
+
+        if (result.length) {
+            result[0].bookings.push(data.bookings);
+        }
+
+        return result;
     }
 }

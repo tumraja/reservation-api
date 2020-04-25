@@ -1,18 +1,18 @@
 import { Tour } from './../model/tour';
 import { storageService } from "../services/storage/storage.service";
+import { DBInterface } from "../services/storage/storage.interface";
 
 class TourRepository {
     private counter: number = 0;
-    private storageService;
+    private storageService: DBInterface;
 
     constructor() {
         this.storageService = storageService.instance;
     }
 
     public create(data: Tour) {
-        this.initCollection();
         const newDocument = this.prepareDocument(data);
-        return this.storageService.create(newDocument)
+        return this.storageService.create(newDocument, 'tours')
     }
 
     private prepareDocument(data: Tour): Tour {
@@ -35,29 +35,21 @@ class TourRepository {
     }
 
     public get() {
-        this.initCollection();
         const project = { 'description' : 1, 'name' : 1, 'image': 1, 'size': 1, 'price': 1, 'include': 1, 'operator': 1 };
-        return this.storageService.aggregate(project);
+        return this.storageService.select('tours', project);
     }
 
     public findById(id: number) {
-        this.initCollection();
         const project  =  { 'tours' : 1, 'name' : 1, 'image': 1, 'size': 1, 'price': 1, 'include': 1 };
-        return this.storageService.findById(id, project);
+        return this.storageService.selectById(id, 'tours', project);
     }
 
     public update(tourId: number, data: any) {
-        this.initCollection();
-        return this.storageService.update(tourId, data);
+        return this.storageService.update(tourId, data, 'tours');
     }
 
     public destroy(tourId: number) {
-        this.initCollection();
-        return this.storageService.destroy(tourId);
-    }
-
-    private initCollection() {
-        this.storageService.setCollection('tours');
+        return this.storageService.destroy(tourId, 'tours');
     }
 }
 

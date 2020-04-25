@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../model/user";
 import { userRepository } from "../repository/user.repository";
 import { checkPasswordPolicy } from "../services/auth/validator/password.service";
-import { emailValidatorService } from "../services/auth/validator/email-validator.service";
+import { isEmailValid } from "../services/auth/validator/email-validator.service";
 
 class UserController {
     public async create(req: Request, resp: Response) {
@@ -10,9 +10,8 @@ class UserController {
 
         const newUser = req.body;
         const list = checkPasswordPolicy(newUser.password);
-        const isEmailValid = emailValidatorService(newUser.email);
 
-        if (!isEmailValid) {
+        if (!isEmailValid(newUser.email)) {
             error = ['email'];
         }
 
@@ -50,31 +49,25 @@ class UserController {
     }
 
     public async update(req: Request, resp: Response) {
-        let error: string[] = [];
+        let listError: string[];
 
         const userId = parseInt(req.params.id);
         const updateUser = req.body;
-        const list = checkPasswordPolicy(updateUser.password);
-        const isEmailValid = emailValidatorService(updateUser.email);
+        listError = updateUser.password ? checkPasswordPolicy(updateUser.password) : [];
 
-        console.log('isEmailValid: ', isEmailValid);
-        if (!isEmailValid) {
-            error = ['email'];
+        if (!isEmailValid(updateUser.email)) {
+            listError.push('email');
         }
 
-        if (list.length || error.length) {
-            error = [...error, ...list]; // TODO: Bug error
-            resp.status(400).json({error});
-            error = [];
+        if (listError.length) {
+            resp.status(400).json({listError});
         } else {
             try {
                 const document: User = await userRepository.update(userId, updateUser);
                 resp.status(200).json({'results': document});
             } catch(err) {
-                console.log('err: ', err);
                 const {key, value} = err.toString().split(':');
-                error = [value.trim()];
-                resp.status(400).json({error});
+                resp.status(400).json({err});
             }
         }
     }

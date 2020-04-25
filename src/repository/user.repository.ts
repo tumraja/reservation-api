@@ -1,67 +1,45 @@
 import { User } from "../model/user";
 import { hashPassword } from "../services/auth/validator/password.service";
 import { storageService } from "../services/storage/storage.service";
-import { EmailError } from "../Errors/EmailError";
-import {UserNotFoundError} from "../Errors/UserNotFoundError";
+import { UserNotFound } from "../Errors/user-not-found";
+import { DBInterface } from "../services/storage/storage.interface";
 
 class UserRepository {
     private counter: number = 0;
-    private storageService;
+    private storageService: DBInterface;
 
     constructor() {
         this.storageService = storageService.instance;
     }
 
     public async create(newUser: User) {
-        this.counter +=1;
-        const primaryId = this.counter;
-        try {
-            this.storageService.setCollection('users_proxy');
-            const proxy = await this.storageService.create({
-                _id: primaryId + 3,
-                email: newUser.email
-            });
-
-            if (proxy) {
-                return this.createUser(newUser, primaryId);
-            }
-        } catch (e) {
-            throw new EmailError();
-        }
-    }
-
-    private async createUser(newUser: User, primaryId: number) {
         const hashedPassword = await hashPassword(newUser.password);
-        const newDocument = this.buildUserDocument(primaryId, newUser, hashedPassword);
+        const newDocument = UserRepository.buildUserDocument(this.counter +=1, newUser, hashedPassword);
 
-        this.storageService.setCollection('users');
-        return await this.storageService.create(newDocument);
+        return this.storageService.create(newDocument, 'users');
     }
 
-    private buildUserDocument(primaryId: number, newUser: User, hashedPassword?: string) {
-        const newDocument = {
-            _id: primaryId + 3,
+    private static buildUserDocument(primaryId: number, newUser: User, hashedPassword?: string) {
+        return {
+            _id: primaryId + 2,
             name: newUser.name,
             email: newUser.email,
             password: hashedPassword,
             age: newUser.age
         };
-        return newDocument;
     }
 
     public async findByEmail(userEmail: string) {
-        this.initCollection();
         const project = {'name': 1, '_id': 1, 'email': 1, 'password': 1, 'age': 1};
-        return await this.storageService.findByEmail(userEmail, project);
+        return await this.storageService.selectByEmail(userEmail, 'users', project);
     }
 
     public async findById(userId: number) {
-        this.initCollection();
         const project = {'name': 1, '_id': 1, 'email': 1, 'age': 1, 'bookings': 1};
-        const result = await this.storageService.findById(userId, project);
+        const result = await this.storageService.selectById(userId, 'users', project);
 
         if (!result.length) {
-            throw new UserNotFoundError();
+            throw new UserNotFound();
         }
 
         return result;
@@ -90,29 +68,12 @@ class UserRepository {
            // 1: email was not changed (No need to update users_proxy collection)
            // 2: password was not changed (No need to hash)
            // 3: when all fields were changed
-        const dbInstance = this.storageService.instance.getInstance();
-        const usersCollection = dbInstance.collection('users');
-        const proxyUsersCollection = dbInstance.collection('users_proxy');
-
-        try {
-            const proxy = await proxyUsersCollection.updateOne({_id: {$eq: userId}}, {$set: {email: data.email}});
-
-            if (proxy) {
-                return await usersCollection.updateOne({_id: {$eq: userId}}, {$set: updateUserDocument});
-            }
-        } catch (e) {
-            console.log('Update err: ', e.errmsg);
-            throw new Error(e.errmsg);
-        }
+        return this.storageService.update(userId, updateUserDocument, 'users');
     }
 
     public async destroy(userId: number) {
         // TODO: if needed (Probably deactivate user's account)
             // if that the case: add field in the document to track
-    }
-
-    private initCollection() {
-        this.storageService.setCollection('users');
     }
 }
 

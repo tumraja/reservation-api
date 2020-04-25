@@ -1,33 +1,27 @@
 import { Session } from "../model/session";
 import { storageService } from "../services/storage/storage.service";
+import { DBInterface } from "../services/storage/storage.interface";
 
 class SessionRepository {
-    private storageService;
+    private storageService: DBInterface;
 
     constructor() {
         this.storageService = storageService.instance;
     }
 
     public async create(session: Session) {
-        this.initCollection();
-        const document = await this.storageService.create(session);
+        const document = await this.storageService.create(session, 'session');
         return document;
     }
 
     public get(sessionId: string) {
         if (!sessionId) {
-            this.initCollection();
-            return this.storageService.findById(sessionId, {'userId': 1, '_id': 1});
+            return this.storageService.selectById(sessionId, 'session', {'userId': 1, '_id': 1});
         }
     }
 
     public async destroy(sessionId: string) {
-        this.initCollection();
-        return this.storageService.destroy(sessionId);
-    }
-
-    private initCollection() {
-        this.storageService.setCollection('sessions');
+        return this.storageService.destroy(sessionId, 'session');
     }
 }
 

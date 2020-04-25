@@ -1,16 +1,16 @@
 import { Booking } from "../model/booking";
 import { storageService } from "../services/storage/storage.service";
+import { DBInterface } from "../services/storage/storage.interface";
 
 class BookingRepository {
     private counter: number = 0;
-    private storageService;
+    private storageService: DBInterface;
 
     constructor() {
         this.storageService = storageService.instance;
     }
 
     public async book(data: Booking) {
-        this.storageService.setCollection('users');
         // TODO: each booking should have a status eg: active / inactive
 
         this.counter +=1;
@@ -25,7 +25,7 @@ class BookingRepository {
                         to:  new Date(data.to),
                         comment: data.comment
                     }
-            });
+            }, 'users');
 
         return result;
     }

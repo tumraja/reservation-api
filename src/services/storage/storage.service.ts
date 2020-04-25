@@ -1,23 +1,22 @@
 /**
  * StorageService returns an singleton instance of the storage type used
- * Engine: DatabaseStorage (MongoDB) or InMemoryStorage
+ * StorageEngine: DatabaseStorage (MongoDB) or InMemoryStorage
  */
 
-import { StorageInterface } from "./storage.interface";
+import { DBInterface } from "./storage.interface";
 import { InMemoryStorage } from "./in-memory.storage";
-import { DatabaseStorage } from "./datatabase.storage";
+import { MongoDbStorage } from "./mongo-db.storage";
 
 export class StorageService {
-    private readonly storageClient;
+    private readonly storageClient: DBInterface;
 
-    constructor(storage: StorageInterface) {
-        storage.connect();
+    constructor(storage: DBInterface) {
         this.storageClient = storage;
     }
 
-    public get instance() {
+    public get instance(): DBInterface {
         return this.storageClient;
     }
 }
 
-export const  storageService = new StorageService(new DatabaseStorage());
+export const  storageService = new StorageService(new InMemoryStorage());

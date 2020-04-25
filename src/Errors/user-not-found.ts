@@ -1,4 +1,4 @@
-export class UserNotFoundError extends Error {
+export class UserNotFound extends Error {
     private errorMessage: string = 'Sorry, we could not foind the user';
     public constructor(message?: string) {
         super(message);
