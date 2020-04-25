@@ -1,4 +1,4 @@
-Simple Tour Booking API
+Simple Tour Booking API (WIP)
 ================================
 
 This small API built on Node, TypeScript and using MongoDB (NoSQL)
@@ -78,7 +78,7 @@ List of endpoints: [Endpoints](docs/ENDPOINT.md)
 Where you can find me
 --------------------
 
-You can find me in [twitter](https://twitter.com/timmoraja) & [web](https://tumsime.com)
+You can find me on [twitter](https://twitter.com/timmoraja)
 Thanks!
 
 License
