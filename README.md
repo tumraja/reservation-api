@@ -1,4 +1,4 @@
-Simple Tour Booking API (WIP)
+TypeScript NodeJs API + MongoDB (WIP)
 ================================
 
 This small API built on Node, TypeScript and using MongoDB (NoSQL)

@@ -62,4 +62,4 @@ You can use any preferred API client to test. Postman was used during developmen
 
 ### Postman
 -----------
-![List of tours](../images/example-tours.png)
+![List of tours](images/example-tours.png)
