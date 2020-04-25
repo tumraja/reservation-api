@@ -83,4 +83,4 @@ Thanks!
 
 License
 --------------------
-Copyright (c) Tumsime Kondo. All rights reserved. Licensed under [MIT](https://twitter.com/timmoraja) file.
+Copyright (c) Tumsime Kondo. All rights reserved. Licensed under [MIT](docs/LICENCE.md) file.
