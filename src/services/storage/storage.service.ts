@@ -19,4 +19,4 @@ export class StorageService {
     }
 }
 
-export const  storageService = new StorageService(new InMemoryStorage());
+export const  storageService = new StorageService(new MongoDbStorage());

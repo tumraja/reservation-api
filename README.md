@@ -45,7 +45,7 @@ For the testing purposes, made a list of endpoints you can on your preferred cli
 There are two types of storage used `MongoDB and InMemory store`. To test using `InMemory store` is very
 straight forward. You just need to change one line of code and then you are good to go. 
 
-> NOTE: MongoDB is used as a default database, to switch to InMemory store, make changes on
+> NOTE: MongoDB is used as a default storage, to switch to InMemory store, make changes on
 > [storage.service.ts](src/services/storage/storage.service.ts) on line 22 to `InMemoryStorage()`.
 
 
