@@ -3,7 +3,7 @@ Simple Tour Booking API
 
 This small API built on Node, TypeScript and using MongoDB (NoSQL)
 
-## Prerequisites
+Prerequisites
 -------------------
 
 Before you start, make sure you have created a database on MongoDB Atlas. 
@@ -15,7 +15,7 @@ If you don't have an account, please follow the link to create one [MongoDB Atla
 * OS (Mac OS X / Windows / Linux)
 
 
-## Getting Started
+Getting Started
 ------------------
 
 1. The easiest way to get started is to clone the repository:
@@ -54,14 +54,14 @@ If you don't have an account, please follow the link to create one [MongoDB Atla
  	# yarn test
  	```
 
-## Adding credentials
+Adding credentials
 ---------------------
 
 Once you have created a database and a user, update environment file configuration - `mongoAtlas`
 > `config/enviroment.yaml`, add your `<username>:<password>`
 
 
-## How to test API
+How to test API
 ---------------
 
 For the testing purposes, made a list of endpoints you can on your preferred client. 
@@ -74,7 +74,7 @@ straight forward. You just need to change one line of code and then you are good
 List of endpoints: [Endpoints](docs/endpoints.md)
 
 
-## Where you can find me
+Where you can find me
 --------------------
 
 You can find me in [twitter](https://twitter.com/timmoraja) & [web](https://tumsime.com)
