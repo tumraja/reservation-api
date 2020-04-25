@@ -48,6 +48,9 @@ straight forward. You just need to change one line of code and then you are good
 > NOTE: MongoDB is used as a default storage, to switch to InMemory store, make changes on
 > [storage.service.ts](src/services/storage/storage.service.ts) on line 22 to `InMemoryStorage()`.
 
+List of endpoint: [Endpoints](docs/endpoints.md)
+
+
 
 Please don't forget to follow me on [twitter](https://twitter.com/timmoraja)
 
