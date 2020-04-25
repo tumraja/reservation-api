@@ -1,7 +1,7 @@
 List of RestAPI endpoint
 ========================
 
-## Test API
+Test API
 ------------------
 You can use any preferred API client to test. Postman was used during development
 

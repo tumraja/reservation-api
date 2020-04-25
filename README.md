@@ -64,14 +64,15 @@ Once you have created a database and a user, update environment file configurati
 How to test API
 ---------------
 
-For the testing purposes, made a list of endpoints you can on your preferred client. 
+For the testing purposes, made a list of endpoints you can use in you preferred client. 
 There are two types of storage used `MongoDB and InMemory store`. To test using `InMemory store` is very
 straight forward. You just need to change one line of code and then you are good to go. 
 
 > NOTE: MongoDB is used as a default storage, to switch to InMemory store, make changes on
-> [storage.service.ts](src/services/storage/storage.service.ts) on line 22 to `InMemoryStorage()`.
+> [storage.service.ts](src/services/storage/storage.service.ts) on line 22 to `InMemoryStorage()` and everything should
+>work out of the box.
 
-List of endpoints: [Endpoints](docs/endpoints.md)
+List of endpoints: [Endpoints](docs/ENDPOINT.md)
 
 
 Where you can find me
