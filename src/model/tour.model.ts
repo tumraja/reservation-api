@@ -1,6 +1,6 @@
-import { Operator } from "./operator";
+import { OperatorModel } from "./operator.model";
 
-export interface Tour {
+export interface TourModel {
    _id: number;
    name: string,
    description: string;
@@ -11,5 +11,5 @@ export interface Tour {
    operatorId: number;
    imageUrl: string;
    size?: number;
-   operator?: Operator[];
+   operator?: OperatorModel[];
 }

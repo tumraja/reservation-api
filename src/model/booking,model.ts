@@ -1,4 +1,4 @@
-export interface Booking {
+export interface BookingModel {
     tourId: number,
     email: string,
     from: string,

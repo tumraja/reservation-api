@@ -1,4 +1,5 @@
-export interface DBInterface {
+export interface DBQueryBuilderInterface {
+    // TODO: Make this to be a builder pattern
     create(data: any, collection?: string);
     select(collection?: string, project?: object);
     selectById(id: number | string, collection?: string, project?: object);
@@ -6,8 +7,4 @@ export interface DBInterface {
     update(id: number, data: any, collection?: string);
     updateByEmail(email: string, data: any, collection?: string);
     destroy(id: number | string, collection?: string);
-}
-
-export interface StorageInterface {
-    // getDefaultPostProcessor();
 }

@@ -1,6 +1,6 @@
 import { operatorRepository } from './../repository/operator.repository.';
 import { Request, Response } from 'express';
-import { Operator } from '../model/operator';
+import { OperatorModel } from '../model/operator.model';
 
 class OperatorController {
    public async create(req: Request, resp: Response) {
@@ -22,7 +22,7 @@ class OperatorController {
   public async get(req: Request, resp: Response) {
         try {
             const operatorId: number = parseInt(req.params.id);
-            const document: Operator[] = operatorId ? await operatorRepository.findById(operatorId) : await operatorRepository.getAll();
+            const document: OperatorModel[] = operatorId ? await operatorRepository.findById(operatorId) : await operatorRepository.getAll();
             resp.status(200).json({'results': document});
         } catch(err) {
             console.log("err: ", err);
@@ -34,7 +34,7 @@ class OperatorController {
         try {
             const data = req.body;
             const operatorId = parseInt(req.params.id);
-            const document: Operator[] = await operatorRepository.update(operatorId, data);
+            const document: OperatorModel[] = await operatorRepository.update(operatorId, data);
             resp.status(200).json({'results': document});
         } catch(err) {
             console.log("err: ", err);
@@ -49,7 +49,7 @@ class OperatorController {
                 throw new Error('Failed to perfom requested operation');
             }
 
-            const collection: Operator[] = await operatorRepository.destroy(operatorId);
+            const collection: OperatorModel[] = await operatorRepository.destroy(operatorId);
             resp.status(200).json(collection);
         } catch(err) {
             console.log("err: ", err);

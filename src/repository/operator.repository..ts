@@ -1,17 +1,17 @@
-import { Operator } from './../model/operator';
+import { OperatorModel } from '../model/operator.model';
 import { storageService } from "../services/storage/storage.service";
-import { DBInterface } from "../services/storage/storage.interface";
+import { DBQueryBuilderInterface } from "../services/storage/storage.interface";
 
 class OperatorRepository {
     private counter: number = 0;
     private project: object = {'name': 1, 'country': 1, 'isVerified': 1, '_id': 1};
-    private storageService: DBInterface;
+    private storageService: DBQueryBuilderInterface;
 
     constructor() {
-        this.storageService = storageService.instance;
+        this.storageService = storageService.getInstance;
     }
 
-    public create(data: Operator) {
+    public create(data: OperatorModel) {
         const primaryId = this.counter += 1;
         const newDocument = {
             _id: primaryId,

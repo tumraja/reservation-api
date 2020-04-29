@@ -1,8 +1,9 @@
-import { DBInterface, StorageInterface} from "./storage.interface";
+import { DBQueryBuilderInterface } from "./storage.interface";
 import { MongoClientProvider } from "./provider/mongo-client.provider";
-import { EmailTaken } from "../../Errors/email-taken";
+import { EmailTaken } from "../../errors/email-taken";
 
-export class MongoDbStorage implements DBInterface, StorageInterface {
+// TODO: should implement a builder pattern
+export class MongoDbStorage implements DBQueryBuilderInterface {
     private provider;
 
     constructor() {
@@ -10,6 +11,7 @@ export class MongoDbStorage implements DBInterface, StorageInterface {
     }
 
     public async create(newDocument, collection) {
+        console.log(newDocument)
         if (collection === 'users') {
             try {
                 const proxy = await this.createDocument({

@@ -1,15 +1,15 @@
-import { Session } from "../model/session";
+import { SessionModel } from "../model/session.model";
 import { storageService } from "../services/storage/storage.service";
-import { DBInterface } from "../services/storage/storage.interface";
+import { DBQueryBuilderInterface } from "../services/storage/storage.interface";
 
 class SessionRepository {
-    private storageService: DBInterface;
+    private storageService: DBQueryBuilderInterface;
 
     constructor() {
-        this.storageService = storageService.instance;
+        this.storageService = storageService.getInstance;
     }
 
-    public async create(session: Session) {
+    public async create(session: SessionModel) {
         const document = await this.storageService.create(session, 'session');
         return document;
     }

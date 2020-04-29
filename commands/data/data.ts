@@ -37,7 +37,7 @@ export const TOURS = [
     },
     {
         _id: 4,
-        name: 'A Fantastic Tanzania Family Tour',
+        name: 'A Fantastic Tanzania Family TourModel',
         description: 'ghgjhj g gfnnghmgh',
         price: '$2000',
         size: 2,

@@ -1,32 +1,19 @@
-import { User } from "../model/user";
-import { hashPassword } from "../services/auth/validator/password.service";
+import { user } from "./builder/user.builder";
 import { storageService } from "../services/storage/storage.service";
-import { UserNotFound } from "../Errors/user-not-found";
-import { DBInterface } from "../services/storage/storage.interface";
+import { UserModel } from "../model/user.model";
+import { UserNotFound } from "../errors/user-not-found";
+import { DBQueryBuilderInterface } from "../services/storage/storage.interface";
 
 class UserRepository {
-    private counter: number = 0;
-    private storageService: DBInterface;
+    private storageService: DBQueryBuilderInterface;
 
     constructor() {
-        this.storageService = storageService.instance;
+        this.storageService = storageService.getInstance;
     }
 
-    public async create(newUser: User) {
-        const hashedPassword = await hashPassword(newUser.password);
-        const newDocument = UserRepository.buildUserDocument(this.counter +=1, newUser, hashedPassword);
-
+    public async create(newUser: UserModel) {
+        const newDocument = await user.fullUser(newUser);
         return this.storageService.create(newDocument, 'users');
-    }
-
-    private static buildUserDocument(primaryId: number, newUser: User, hashedPassword?: string) {
-        return {
-            _id: primaryId + 2,
-            name: newUser.name,
-            email: newUser.email,
-            password: hashedPassword,
-            age: newUser.age
-        };
     }
 
     public async findByEmail(userEmail: string) {
@@ -46,29 +33,19 @@ class UserRepository {
     }
 
     public async update(userId: number, data: any) {
-        let updateUserDocument = {};
-        // TODO: Move this to separate class: HandleUpdateCriteria
+        let userDocument;
+
         if (!data.password) {
-            Object.assign(updateUserDocument, {
-                name: data.name,
-                email: data.email,
-                age: data.age
-            });
+            userDocument = user.withoutUserPassword(data);
         } else {
-            const hashedPassword = await hashPassword(data.password);
-            Object.assign(updateUserDocument, {
-                name: data.name,
-                email: data.email,
-                password: hashedPassword,
-                age: data.age
-            });
+            userDocument = await user.withUserPassword(data);
         }
 
         // TODO: Handle special cases: (Now assume all fields were changed with the exceptional: password)
            // 1: email was not changed (No need to update users_proxy collection)
            // 2: password was not changed (No need to hash)
            // 3: when all fields were changed
-        return this.storageService.update(userId, updateUserDocument, 'users');
+        return this.storageService.update(userId, userDocument, 'users');
     }
 
     public async destroy(userId: number) {

@@ -1,4 +1,4 @@
-import { Tour } from './../model/tour';
+import { TourModel } from '../model/tour.model';
 import { Request, Response } from 'express';
 import { tourRepository } from '../repository/tour.repository';
 
@@ -7,7 +7,7 @@ class TourController {
         try {
             const data = req.body;
             if (data.name && data.description && data.imageUrl && data.size && data.price && data.include && data.operatorId && data.type) {
-                const collection: Tour[] = await tourRepository.create(data);
+                const collection: TourModel[] = await tourRepository.create(data);
                 resp.status(200).json({'results': collection});
             } else {
                 resp.status(403).json({"error": "Fill all the required fields"});
@@ -21,7 +21,7 @@ class TourController {
    public async get(req: Request, resp: Response) {
         try {
             const tourId = parseInt(req.params.id);
-            const document: Tour = tourId ? await tourRepository.findById(tourId): await tourRepository.get();
+            const document: TourModel = tourId ? await tourRepository.findById(tourId): await tourRepository.get();
             resp.status(200).json({'results': document});
         } catch(err) {
             console.log("err: ", err);
@@ -33,7 +33,7 @@ class TourController {
         try {
             const data = req.body;
             const operatorId = parseInt(req.params.id);
-            const document: Tour[] = await tourRepository.update(operatorId, data);
+            const document: TourModel[] = await tourRepository.update(operatorId, data);
             resp.status(200).json({'results': document});
         } catch(err) {
             console.log("err: ", err);
@@ -48,7 +48,7 @@ class TourController {
                 throw new Error('Failed to perfom requested operation');
             }
 
-            const document: Tour[] = await tourRepository.destroy(operatorId);
+            const document: TourModel[] = await tourRepository.destroy(operatorId);
             resp.status(200).json({'results': document});
         } catch(err) {
             console.log("err: ", err);

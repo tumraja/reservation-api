@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
-import { User } from "../model/user";
+import { UserModel } from "../model/user.model";
 import { userRepository } from "../repository/user.repository";
 import { checkPasswordPolicy } from "../services/auth/validator/password.service";
 import { isEmailValid } from "../services/auth/validator/email-validator.service";
 
 class UserController {
+    // TODO: Add a Observer pattern only when a new account is created
+    // TODO: add public for users_proxy and observer for users
     public async create(req: Request, resp: Response) {
         let error: string[] = [];
 
@@ -20,7 +22,7 @@ class UserController {
             resp.status(400).json({error});
         } else {
             try {
-                const document: User = await userRepository.create(newUser);
+                const document: UserModel = await userRepository.create(newUser);
                 resp.status(200).json({'results': document});
             } catch(err) {
                 resp.status(400).json({err});
@@ -63,7 +65,7 @@ class UserController {
             resp.status(400).json({listError});
         } else {
             try {
-                const document: User = await userRepository.update(userId, updateUser);
+                const document: UserModel = await userRepository.update(userId, updateUser);
                 resp.status(200).json({'results': document});
             } catch(err) {
                 const {key, value} = err.toString().split(':');

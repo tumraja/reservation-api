@@ -3,19 +3,19 @@
  * StorageEngine: DatabaseStorage (MongoDB) or InMemoryStorage
  */
 
-import { DBInterface } from "./storage.interface";
+import { DBQueryBuilderInterface } from "./storage.interface";
 import { InMemoryStorage } from "./in-memory.storage";
 import { MongoDbStorage } from "./mongo-db.storage";
 
 export class StorageService {
-    private readonly storageClient: DBInterface;
+    private readonly queryBuilder: DBQueryBuilderInterface;
 
-    constructor(storage: DBInterface) {
-        this.storageClient = storage;
+    public constructor(queryBuilder: DBQueryBuilderInterface) {
+        this.queryBuilder = queryBuilder;
     }
 
-    public get instance(): DBInterface {
-        return this.storageClient;
+    public get getInstance(): DBQueryBuilderInterface {
+        return this.queryBuilder;
     }
 }
 

@@ -1,21 +1,22 @@
-import { Booking } from "../model/booking";
+import { BookingModel } from "../model/booking,model";
 import { storageService } from "../services/storage/storage.service";
-import { DBInterface } from "../services/storage/storage.interface";
+import { DBQueryBuilderInterface } from "../services/storage/storage.interface";
 
 class BookingRepository {
     private counter: number = 0;
-    private storageService: DBInterface;
+    private storageService: DBQueryBuilderInterface;
 
     constructor() {
-        this.storageService = storageService.instance;
+        this.storageService = storageService.getInstance;
     }
 
-    public async book(data: Booking) {
+    public async book(data: BookingModel) {
         // TODO: each booking should have a status eg: active / inactive
 
         this.counter +=1;
         const primaryId = this.counter;
 
+        // TODO: booking should be an object, create a class that return booking object
         const result = this.storageService.updateByEmail(data.email, {
                     bookings: {
                         _id: primaryId,

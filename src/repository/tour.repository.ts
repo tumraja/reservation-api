@@ -1,21 +1,21 @@
-import { Tour } from './../model/tour';
+import { TourModel } from '../model/tour.model';
 import { storageService } from "../services/storage/storage.service";
-import { DBInterface } from "../services/storage/storage.interface";
+import { DBQueryBuilderInterface } from "../services/storage/storage.interface";
 
 class TourRepository {
     private counter: number = 0;
-    private storageService: DBInterface;
+    private storageService: DBQueryBuilderInterface;
 
     constructor() {
-        this.storageService = storageService.instance;
+        this.storageService = storageService.getInstance;
     }
 
-    public create(data: Tour) {
+    public create(data: TourModel) {
         const newDocument = this.prepareDocument(data);
         return this.storageService.create(newDocument, 'tours')
     }
 
-    private prepareDocument(data: Tour): Tour {
+    private prepareDocument(data: TourModel): TourModel {
         const primaryId = this.counter += 1;
 
         const document = {

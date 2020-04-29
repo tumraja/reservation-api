@@ -18,7 +18,7 @@ You can use any preferred API client to test. Postman was used during developmen
    ```bash
    /api/operators
    body: {
-    "name": "Operator name",
+    "name": "OperatorModel name",
     "country": "Country",
     "isVerified": false
    }
@@ -27,7 +27,7 @@ You can use any preferred API client to test. Postman was used during developmen
    ```bash
       /api/operators
       body: {
-       "name": "Example Camping Tour",
+       "name": "Example Camping TourModel",
        "description": "Example tour....",
        "price": "$500",
        "size": 2,

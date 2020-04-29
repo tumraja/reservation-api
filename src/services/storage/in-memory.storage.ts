@@ -1,7 +1,8 @@
-import { DBInterface, StorageInterface } from "./storage.interface";
+import { DBQueryBuilderInterface } from "./storage.interface";
 import { document } from "./provider/in-memory-data.provider";
 
-export class InMemoryStorage implements DBInterface, StorageInterface {
+// TODO: Should implement a builder pattern
+export class InMemoryStorage implements DBQueryBuilderInterface {
     create(data: any, collection) {
         return document(collection).push(data);
     }
@@ -25,7 +26,7 @@ export class InMemoryStorage implements DBInterface, StorageInterface {
         return [];
     }
 
-    // Booking
+    // BookingModel
     updateByEmail(email: string, data: any, collection) {
         const result = document(collection).filter(document => document.email === email);
 
